@@ -33,7 +33,7 @@ Moodle is installed from the command line on first boot, with an admin password 
 
 ### Implementation Details
 
-**After deploying:** the first boot takes a minute or two. Then open the Moodle domain and log in as `admin` with `MOODLE_ADMIN_PASSWORD` from the Moodle service's Variables tab. Change the site name under Site administration → General → Site home settings, and the admin email in the admin's profile.
+**After deploying:** the first deploy takes about five minutes: about four to build the image and one to install Moodle. Then open the Moodle domain and log in as `admin` with `MOODLE_ADMIN_PASSWORD` from the Moodle service's Variables tab. Change the site name under Site administration → General → Site home settings, and the admin email in the admin's profile.
 
 **Email.** Set up SMTP under Site administration → Server → Email → Outgoing mail configuration. Railway allows outbound SMTP only on the Pro plan and above; on Trial and Hobby, Moodle can't send email (Moodle has no HTTP-API mail option).
 
@@ -47,7 +47,7 @@ Moodle is installed from the command line on first boot, with an admin password 
 
 **Command line.** `moodle <script>` runs any of Moodle's CLI scripts as the web server user, for example `moodle purge_caches`, `moodle maintenance --enable` or `moodle reset_password`.
 
-**Memory.** Apache's worker count is sized from the service's memory limit. Moodle idles at about 100 MB and peaked at about 230 MB with 16 simultaneous users in testing; Postgres uses about 80 MB.
+**Memory.** Apache's worker count follows the service's memory limit: 6 workers at 1 GB, up to 64 on large plans. Moodle idles at about 100 MB. In testing, 16 users clicking at once took it to about 230 MB with a 1 GB limit, and to about 0.75 GB on an 8 GB plan, where Apache starts more workers. Postgres uses 0.1–0.3 GB.
 
 **Changes from a stock Moodle install:**
 
