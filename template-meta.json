@@ -5,5 +5,6 @@
   "category": "CMS",
   "image": "https://devicons.railway.com/i/moodle.svg",
   "card_desc": "The current official Moodle 5.2 release on Postgres, installed from the command line with a generated admin password, with cron, upgrades on redeploy and nightly backups to a Railway bucket.",
-  "id": "86a05038-0c29-4b8c-b7d2-30597646594b"
+  "id": "86a05038-0c29-4b8c-b7d2-30597646594b",
+  "published": true
 }
