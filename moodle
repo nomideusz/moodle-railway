@@ -1,0 +1,5 @@
+#!/bin/sh
+# Run a Moodle CLI script as the web server's user: moodle <script> [options], e.g.
+#   moodle purge_caches    moodle maintenance --enable    moodle cfg --name=theme
+script=$1; shift
+exec runuser -u www-data -- php "/var/www/moodle/admin/cli/$script.php" "$@"

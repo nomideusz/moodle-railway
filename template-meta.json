@@ -1,0 +1,8 @@
+{
+  "name": "Moodle 5.2 | Official Release, Postgres, Nightly Backups",
+  "short_name": "Moodle 5",
+  "description": "Current Moodle LMS on Postgres, installed with no open setup page",
+  "category": "CMS",
+  "image": "https://devicons.railway.com/i/moodle.svg",
+  "card_desc": "The current official Moodle 5.2 release on Postgres, installed from the command line with a generated admin password, with cron, upgrades on redeploy and nightly backups to a Railway bucket."
+}

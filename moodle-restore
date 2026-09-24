@@ -1,0 +1,31 @@
+#!/bin/bash
+# Restore a backup made by moodle-backup, replacing the database and the data
+# directory. Visitors see the maintenance page meanwhile.
+#   moodle-restore Mon                        # from the bucket
+#   moodle-restore /tmp/moodle-Mon.tar.gz     # from a file
+set -euo pipefail
+
+src=${1:?usage: moodle-restore <Mon|Tue|...|Sun|/path/to/moodle-Day.tar.gz>}
+data=/var/moodledata
+tmp=$(mktemp -d)
+trap 'rm -rf "$tmp"' EXIT
+if [ ! -f "$src" ]; then
+  curl -fsS --aws-sigv4 "aws:amz:${S3_REGION:-auto}:s3" -u "$S3_ACCESS_KEY_ID:$S3_SECRET_ACCESS_KEY" \
+    -o "$tmp/backup.tar.gz" "https://$S3_BUCKET.${S3_ENDPOINT#https://}/moodle-$src.tar.gz"
+  src=$tmp/backup.tar.gz
+fi
+tar -xzf "$src" -C "$tmp" database.dump
+
+install -o www-data -m 644 /usr/local/share/railway/maintenance.html "$data/climaintenance.html"
+psql -q -v ON_ERROR_STOP=1 -c 'drop schema public cascade; create schema public'
+pg_restore --no-owner --exit-on-error -d "$PGDATABASE" "$tmp/database.dump"
+find "$data" -mindepth 1 -maxdepth 1 ! -name climaintenance.html -exec rm -rf {} +
+tar -xzf "$src" -C /var --exclude=database.dump moodledata
+chown -R www-data: "$data"
+
+# A backup from an older release: bring its database up to this one.
+rc=0; moodle upgrade --is-pending >/dev/null 2>&1 || rc=$?
+[ "$rc" = 2 ] && moodle upgrade --non-interactive | { grep -v -e '^++ Success' -e '^-->' || true; }
+moodle purge_caches
+rm -f "$data/climaintenance.html"
+echo "moodle-restore: done"

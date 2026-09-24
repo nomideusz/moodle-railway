@@ -1,0 +1,187 @@
+{
+  "buckets": {
+    "92d27f8e-af0a-41c7-b54e-f218ba3eb681": {
+      "name": "Backups"
+    }
+  },
+  "services": {
+    "6c924e0b-7591-4e99-b6ee-cb92d2161c67": {
+      "icon": "https://devicons.railway.com/i/moodle.svg",
+      "name": "Moodle",
+      "build": {
+        "dockerfilePath": "Dockerfile"
+      },
+      "deploy": {
+        "startCommand": null,
+        "healthcheckPath": "/healthz",
+        "restartPolicyType": "ON_FAILURE",
+        "restartPolicyMaxRetries": 10
+      },
+      "source": {
+        "repo": "https://github.com/nomideusz/moodle-railway",
+        "rootDirectory": "/"
+      },
+      "variables": {
+        "PORT": {
+          "defaultValue": "8080",
+          "description": "Port Apache listens on - leave as is",
+          "isOptional": false
+        },
+        "MOODLE_URL": {
+          "defaultValue": "https://${{RAILWAY_PUBLIC_DOMAIN}}",
+          "description": "Site address. On a custom domain, set it to https://your.domain",
+          "isOptional": false
+        },
+        "MOODLE_ADMIN_PASSWORD": {
+          "defaultValue": "${{secret(20)}}",
+          "description": "Password for the 'admin' login, set on first boot only - change it in Moodle afterwards",
+          "isOptional": false
+        },
+        "MOODLE_ADMIN_EMAIL": {
+          "defaultValue": "admin@example.com",
+          "description": "Admin email, set on first boot only - change it in the admin's profile",
+          "isOptional": false
+        },
+        "PGHOST": {
+          "defaultValue": "${{Postgres.PGHOST}}",
+          "description": "Postgres host - private network only, leave as is",
+          "isOptional": false
+        },
+        "PGPORT": {
+          "defaultValue": "${{Postgres.PGPORT}}",
+          "description": "Postgres port - leave as is",
+          "isOptional": false
+        },
+        "PGUSER": {
+          "defaultValue": "${{Postgres.PGUSER}}",
+          "description": "Database user - wired to the bundled Postgres, leave as is",
+          "isOptional": false
+        },
+        "PGPASSWORD": {
+          "defaultValue": "${{Postgres.PGPASSWORD}}",
+          "description": "Database password - wired to the bundled Postgres, leave as is",
+          "isOptional": false
+        },
+        "PGDATABASE": {
+          "defaultValue": "${{Postgres.PGDATABASE}}",
+          "description": "Database name - wired to the bundled Postgres, leave as is",
+          "isOptional": false
+        },
+        "S3_ENDPOINT": {
+          "defaultValue": "${{Backups.ENDPOINT}}",
+          "description": "Nightly backups go to the bundled bucket - leave as is",
+          "isOptional": true
+        },
+        "S3_BUCKET": {
+          "defaultValue": "${{Backups.BUCKET}}",
+          "description": "Backup bucket name. Empty = no nightly backups",
+          "isOptional": true
+        },
+        "S3_REGION": {
+          "defaultValue": "${{Backups.REGION}}",
+          "description": "Backup bucket region",
+          "isOptional": true
+        },
+        "S3_ACCESS_KEY_ID": {
+          "defaultValue": "${{Backups.ACCESS_KEY_ID}}",
+          "description": "Backup bucket credentials",
+          "isOptional": true
+        },
+        "S3_SECRET_ACCESS_KEY": {
+          "defaultValue": "${{Backups.SECRET_ACCESS_KEY}}",
+          "description": "Backup bucket credentials",
+          "isOptional": true
+        }
+      },
+      "networking": {
+        "serviceDomains": {
+          "<hasDomain>": {}
+        }
+      },
+      "volumeMounts": {
+        "6c924e0b-7591-4e99-b6ee-cb92d2161c67": {
+          "mountPath": "/var/moodledata"
+        }
+      }
+    },
+    "ca5b8e8b-b340-47a8-b07a-43a45b24f210": {
+      "icon": "https://devicons.railway.com/i/postgresql.svg",
+      "name": "Postgres",
+      "build": {},
+      "deploy": {
+        "requiredMountPath": "/var/lib/postgresql/data"
+      },
+      "source": {
+        "image": "ghcr.io/railwayapp-templates/postgres-ssl:17"
+      },
+      "variables": {
+        "PGDATA": {
+          "defaultValue": "/var/lib/postgresql/data/pgdata",
+          "description": "Location where the database will be initialized",
+          "isOptional": false
+        },
+        "PGHOST": {
+          "defaultValue": "${{RAILWAY_PRIVATE_DOMAIN}}",
+          "description": "Railway Private Domain Name.",
+          "isOptional": false
+        },
+        "PGPORT": {
+          "defaultValue": "5432",
+          "description": "Port to connect to Postgres.",
+          "isOptional": false
+        },
+        "PGUSER": {
+          "defaultValue": "${{ POSTGRES_USER }}",
+          "description": "Required variable for Data panel",
+          "isOptional": false
+        },
+        "PGDATABASE": {
+          "defaultValue": "${{POSTGRES_DB}}",
+          "description": "Required variable for the data panel.",
+          "isOptional": false
+        },
+        "PGPASSWORD": {
+          "defaultValue": "${{POSTGRES_PASSWORD}}",
+          "description": "Required variable for Data panel",
+          "isOptional": false
+        },
+        "POSTGRES_DB": {
+          "defaultValue": "moodle",
+          "description": "Default database created when image is started.",
+          "isOptional": false
+        },
+        "DATABASE_URL": {
+          "defaultValue": "postgresql://${{PGUSER}}:${{POSTGRES_PASSWORD}}@${{RAILWAY_PRIVATE_DOMAIN}}:5432/${{PGDATABASE}}",
+          "description": "URL to connect to Postgres database.",
+          "isOptional": false
+        },
+        "POSTGRES_USER": {
+          "defaultValue": "postgres",
+          "description": "User to connect to Postgres DB",
+          "isOptional": false
+        },
+        "SSL_CERT_DAYS": {
+          "defaultValue": "820",
+          "description": "SSL certificate expiry in days.",
+          "isOptional": true
+        },
+        "POSTGRES_PASSWORD": {
+          "defaultValue": "${{ secret(32, \"abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ\") }}",
+          "description": "Password to connect to DB",
+          "isOptional": false
+        },
+        "RAILWAY_DEPLOYMENT_DRAINING_SECONDS": {
+          "defaultValue": "60",
+          "description": "Allow Postgres to cleanly shut down",
+          "isOptional": false
+        }
+      },
+      "networking": {},
+      "volumeMounts": {
+        "ca5b8e8b-b340-47a8-b07a-43a45b24f210": {
+          "mountPath": "/var/lib/postgresql/data"
+        }
+      }
+    }
+  }
+}
