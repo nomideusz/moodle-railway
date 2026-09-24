@@ -17,7 +17,7 @@ fi
 tar -xzf "$src" -C "$tmp" database.dump
 
 install -o www-data -m 644 /usr/local/share/railway/maintenance.html "$data/climaintenance.html"
-psql -q -v ON_ERROR_STOP=1 -c 'drop schema public cascade; create schema public'
+psql -q -v ON_ERROR_STOP=1 -c 'set client_min_messages = warning' -c 'drop schema public cascade' -c 'create schema public'
 pg_restore --no-owner --exit-on-error -d "$PGDATABASE" "$tmp/database.dump"
 find "$data" -mindepth 1 -maxdepth 1 ! -name climaintenance.html -exec rm -rf {} +
 tar -xzf "$src" -C /var --exclude=database.dump moodledata
