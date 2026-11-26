@@ -2,7 +2,7 @@
 
 [![Deploy on Railway](https://railway.com/button.svg)](https://railway.com/new/template/moodle-5?referralCode=sLjDXb&utm_medium=integration&utm_source=button&utm_campaign=moodle-5)
 
-[Moodle](https://moodle.org) is the open-source learning platform used by schools, universities and companies worldwide: courses, assignments, quizzes, gradebook, forums, badges and certificates, with more than 2,000 plugins. This template runs the current official Moodle 5.2 release (5.2.3) on PostgreSQL.
+[Moodle](https://moodle.org) is the open-source learning platform used by schools, universities and companies worldwide: courses, assignments, quizzes, gradebook, forums, badges and certificates, with more than 2,000 plugins. This template runs the current official Moodle 5.2 release (5.2.5) on PostgreSQL.
 
 ## About Hosting Moodle
 

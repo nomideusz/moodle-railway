@@ -24,10 +24,10 @@ RUN set -eux; \
 # The official release package. The code stays in the image, owned by root: only
 # the data directory is on the volume, which keeps it small and makes an upgrade a
 # plain redeploy. Plugins are added to the image from plugins/ (see its README).
-ENV MOODLE_VERSION=5.2.4
+ENV MOODLE_VERSION=5.2.5
 RUN set -eux; \
 	curl -fsSL -o /tmp/moodle.tgz "https://packaging.moodle.org/stable502/moodle-${MOODLE_VERSION}.tgz"; \
-	echo '8569b63f1e97416ecb67ec75767dd20675892c7a62a5e90d1647366fddf873cf  /tmp/moodle.tgz' | sha256sum -c -; \
+	echo 'a0b2bf3013a8ef149db17c508f647d18b2a7f4b2c34056010f75081c87b4bb66  /tmp/moodle.tgz' | sha256sum -c -; \
 	mkdir -p /var/www/moodle; \
 	tar -xzf /tmp/moodle.tgz -C /var/www/moodle --strip-components=1 --no-same-owner; \
 	rm /tmp/moodle.tgz
